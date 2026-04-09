@@ -7,6 +7,8 @@ return [
         'api_key' => env('PROOVIT_API_KEY'),
         'access_token' => env('PROOVIT_ACCESS_TOKEN'),
         'workspace_token' => env('PROOVIT_WORKSPACE_TOKEN'),
+        'company_name' => env('PROOVIT_COMPANY_NAME'),
+        'login_email' => env('PROOVIT_LOGIN_EMAIL'),
         'mode' => env('PROOVIT_MODE', 'production'),
         'timeout' => (int) env('PROOVIT_TIMEOUT', 30),
         'connect_timeout' => (int) env('PROOVIT_CONNECT_TIMEOUT', 10),

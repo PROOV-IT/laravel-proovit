@@ -11,6 +11,8 @@ final readonly class ProovitConnectionData
         public ?string $mode = null,
         public ?string $baseUrl = null,
         public ?string $workspaceToken = null,
+        public ?string $companyName = null,
+        public ?string $loginEmail = null,
         public array $raw = [],
     ) {}
 
@@ -21,6 +23,8 @@ final readonly class ProovitConnectionData
             mode: $data['mode'] ?? null,
             baseUrl: $data['base_url'] ?? null,
             workspaceToken: $data['workspace_token'] ?? null,
+            companyName: $data['company_name'] ?? null,
+            loginEmail: $data['login_email'] ?? null,
             raw: $data,
         );
     }

@@ -24,6 +24,8 @@ final class TestProovitConnectionAction
             'mode' => $this->config->mode->value,
             'base_url' => $this->config->baseUrl,
             'workspace_token' => $this->config->workspaceToken,
+            'company_name' => $this->config->companyName,
+            'login_email' => $this->config->loginEmail,
             'payload' => $payload,
         ] + $payload);
     }

@@ -24,6 +24,8 @@ it('builds a config object from array', function (): void {
 
     expect($config->baseUrl)->toBe('https://api.example.test');
     expect($config->appUrl)->toBe('https://app.example.test');
+    expect($config->companyName)->toBeNull();
+    expect($config->loginEmail)->toBeNull();
     expect($config->mode)->toBe(ProovitMode::Sandbox);
     expect($config->featureEnabled('proofs'))->toBeTrue();
     expect($config->featureEnabled('certificates'))->toBeFalse();

@@ -22,6 +22,8 @@ final class ResolveProovitContextAction
         return ProovitContextData::fromArray([
             'base_url' => $this->config->baseUrl,
             'app_url' => $this->config->appUrl,
+            'company_name' => $this->config->companyName,
+            'login_email' => $this->config->loginEmail,
             'mode' => $this->config->mode->value,
             'features' => $this->features->all(),
             'docs' => $this->config->docs,

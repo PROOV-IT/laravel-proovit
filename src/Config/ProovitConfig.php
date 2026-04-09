@@ -19,6 +19,10 @@ final class ProovitConfig
 
     public readonly ?string $workspaceToken;
 
+    public readonly ?string $companyName;
+
+    public readonly ?string $loginEmail;
+
     public readonly ProovitMode $mode;
 
     public readonly int $timeout;
@@ -51,6 +55,8 @@ final class ProovitConfig
         ?string $apiKey = null,
         ?string $accessToken = null,
         ?string $workspaceToken = null,
+        ?string $companyName = null,
+        ?string $loginEmail = null,
         ProovitMode $mode = ProovitMode::Production,
         int $timeout = 30,
         int $connectTimeout = 10,
@@ -70,6 +76,8 @@ final class ProovitConfig
         $this->apiKey = $apiKey;
         $this->accessToken = $accessToken;
         $this->workspaceToken = $workspaceToken;
+        $this->companyName = $companyName;
+        $this->loginEmail = $loginEmail;
         $this->mode = $mode;
         $this->timeout = $timeout;
         $this->connectTimeout = $connectTimeout;
@@ -112,6 +120,8 @@ final class ProovitConfig
             apiKey: $connection['api_key'] ?? null,
             accessToken: $connection['access_token'] ?? null,
             workspaceToken: $connection['workspace_token'] ?? null,
+            companyName: $connection['company_name'] ?? null,
+            loginEmail: $connection['login_email'] ?? null,
             mode: $proovitMode,
             timeout: (int) ($connection['timeout'] ?? 30),
             connectTimeout: (int) ($connection['connect_timeout'] ?? 10),
@@ -148,6 +158,8 @@ final class ProovitConfig
                 'api_key' => $this->apiKey,
                 'access_token' => $this->accessToken,
                 'workspace_token' => $this->workspaceToken,
+                'company_name' => $this->companyName,
+                'login_email' => $this->loginEmail,
                 'mode' => $this->mode->value,
                 'timeout' => $this->timeout,
                 'connect_timeout' => $this->connectTimeout,

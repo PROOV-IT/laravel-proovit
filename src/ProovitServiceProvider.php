@@ -10,6 +10,7 @@ use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitConfigResolver;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
 use Proovit\LaravelProovit\Support\ProovitPayloadNormalizer;
+use Proovit\LaravelProovit\Support\ProovitSettingsRepository;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -21,6 +22,8 @@ final class ProovitServiceProvider extends PackageServiceProvider
             ->name('laravel-proovit')
             ->hasConfigFile('proovit')
             ->hasTranslations();
+
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
     public function register(): void
@@ -28,6 +31,7 @@ final class ProovitServiceProvider extends PackageServiceProvider
         parent::register();
 
         $this->app->singleton(ProovitConfigResolver::class);
+        $this->app->singleton(ProovitSettingsRepository::class);
         $this->app->singleton(ProovitConfig::class, static fn ($app): ProovitConfig => $app->make(ProovitConfigResolver::class)->resolve());
         $this->app->singleton(ProovitFeatureManager::class, static fn ($app): ProovitFeatureManager => new ProovitFeatureManager($app->make(ProovitConfig::class)));
         $this->app->singleton(ProovitCertificateResolver::class);

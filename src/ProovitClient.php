@@ -106,6 +106,8 @@ final class ProovitClient
                     apiKey: $config->apiKey,
                     accessToken: $this->accessToken,
                     workspaceToken: $config->workspaceToken,
+                    companyName: $config->companyName,
+                    loginEmail: $config->loginEmail,
                     mode: $config->mode,
                     timeout: $config->timeout,
                     connectTimeout: $config->connectTimeout,
