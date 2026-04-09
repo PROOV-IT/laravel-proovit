@@ -9,6 +9,7 @@ use GuzzleHttp\ClientInterface;
 use InvalidArgumentException;
 use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\DTOs\ProovitConnectionData;
+use Proovit\LaravelProovit\Events\Connection\ConnectionAuthenticated;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
 
@@ -65,7 +66,7 @@ final class AuthenticateProovitConnectionAction
         $companiesPayload = $companiesClient->request('GET', '/v1/companies');
         $companies = array_values((array) ($companiesPayload['data'] ?? $companiesPayload['items'] ?? $companiesPayload['companies'] ?? $companiesPayload));
 
-        return ProovitConnectionData::fromArray([
+        $connection = ProovitConnectionData::fromArray([
             'connected' => true,
             'mode' => $config->mode->value,
             'base_url' => $config->baseUrl,
@@ -77,6 +78,10 @@ final class AuthenticateProovitConnectionAction
             'companies' => $companies,
             'payload' => $loginPayload,
         ]);
+
+        event(new ConnectionAuthenticated($connection));
+
+        return $connection;
     }
 
     private function makeClient(ProovitConfig $config): ClientInterface

@@ -7,6 +7,8 @@ namespace Proovit\LaravelProovit\Actions\Proofs;
 use InvalidArgumentException;
 use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\Builders\Proofs\ProofSignatureBuilder;
+use Proovit\LaravelProovit\DTOs\ProofData;
+use Proovit\LaravelProovit\Events\Proofs\ProofSigned;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 
 final class SignProofAction
@@ -33,8 +35,13 @@ final class SignProofAction
             ], static fn ($value): bool => $value !== null);
         }
 
-        return $this->client->request('POST', "/v1/proofs/{$proofId}/sign", [
+        $response = $this->client->request('POST', "/v1/proofs/{$proofId}/sign", [
             'json' => $payload,
         ]);
+
+        $proof = ProofData::fromArray($response['proof'] ?? $response['data'] ?? ['id' => $proofId, 'status' => 'unknown']);
+        event(new ProofSigned($proofId, $proof, $payload, $response));
+
+        return $response;
     }
 }

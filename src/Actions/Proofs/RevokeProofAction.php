@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Proovit\LaravelProovit\Actions\Proofs;
 
+use Proovit\LaravelProovit\DTOs\ProofData;
+use Proovit\LaravelProovit\Events\Proofs\ProofRevoked;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 
 final class RevokeProofAction
@@ -18,8 +20,13 @@ final class RevokeProofAction
             'reason' => $reason,
         ], static fn (mixed $value): bool => $value !== null && $value !== '');
 
-        return $this->client->request('POST', "/v1/proofs/{$proofId}/revoke", [
+        $response = $this->client->request('POST', "/v1/proofs/{$proofId}/revoke", [
             'json' => $payload,
         ]);
+
+        $proof = ProofData::fromArray($response['proof'] ?? $response['data'] ?? ['id' => $proofId, 'status' => 'revoked']);
+        event(new ProofRevoked($proofId, $proof, $payload, $response));
+
+        return $response;
     }
 }

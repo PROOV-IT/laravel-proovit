@@ -8,6 +8,7 @@ This package provides a Laravel-native SDK to communicate with the ProovIT proof
 - [Configuration](configuration.md)
 - [API](api.md)
 - [Use cases](use-cases/)
+- [Events](use-cases/events.md)
 - [Proof templates](use-cases/proof-templates.md)
 - [Reference data](use-cases/reference-data.md)
 - [Persistent configuration](use-cases/settings-page.md)

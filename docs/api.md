@@ -6,6 +6,9 @@ Use the `ProovitClient` service from the container and call the `connection()` a
 For complex proof creation flows, use `proofBuilder()` to assemble the payload for `init`,
 `files`, and `sign`.
 
+The connection resource also exposes convenience helpers to persist the returned session
+and bind the selected company UUID after login.
+
 ## Example
 
 ```php
@@ -27,4 +30,10 @@ $proofBuilder = $client->proofBuilder()
     ->withMetadata(static function (ProofMetadataBuilder $metadata): void {
         $metadata->withCustomFields(['invoice_number' => 'INV-2026-0001']);
     });
+
+$client->connection()->authenticateAndPersist(
+    email: 'admin@example.test',
+    password: 'secret',
+    selectedCompanyUuid: '01985517-991d-714f-b375-9cf8e534a843',
+);
 ```

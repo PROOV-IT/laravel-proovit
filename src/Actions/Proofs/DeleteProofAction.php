@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Proovit\LaravelProovit\Actions\Proofs;
 
+use Proovit\LaravelProovit\Events\Proofs\ProofDeleted;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 
 final class DeleteProofAction
@@ -14,7 +15,8 @@ final class DeleteProofAction
 
     public function handle(string $proofId): bool
     {
-        $this->client->request('DELETE', "/v1/proofs/{$proofId}");
+        $response = $this->client->request('DELETE', "/v1/proofs/{$proofId}");
+        event(new ProofDeleted($proofId, true, $response));
 
         return true;
     }

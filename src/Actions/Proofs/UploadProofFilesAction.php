@@ -6,6 +6,8 @@ namespace Proovit\LaravelProovit\Actions\Proofs;
 
 use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\Builders\Proofs\ProofFilesBuilder;
+use Proovit\LaravelProovit\DTOs\ProofData;
+use Proovit\LaravelProovit\Events\Proofs\ProofFilesUploaded;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 
 final class UploadProofFilesAction
@@ -27,6 +29,9 @@ final class UploadProofFilesAction
         $response = $this->client->request('POST', "/v1/proofs/{$proofId}/files", [
             'multipart' => $files->toMultipart(),
         ]);
+
+        $proof = ProofData::fromArray($response['proof'] ?? $response['data'] ?? ['id' => $proofId, 'status' => 'unknown']);
+        event(new ProofFilesUploaded($proofId, $proof, [], $response));
 
         return $response;
     }

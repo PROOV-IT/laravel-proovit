@@ -5,8 +5,15 @@ The SDK is designed around a simple ProovIT authentication flow:
 1. authenticate with email and password
 2. receive a bearer token
 3. fetch the list of companies available to the user
-4. store the session data in the package settings store
+4. persist the session data in the package settings store
 5. select the company UUID to scope the following requests
+
+For application code, the easiest path is:
+
+1. authenticate the connection
+2. persist the returned session
+3. select the company UUID once the user has picked one
+4. reuse the saved session on later requests
 
 ## Base URL
 
@@ -40,6 +47,34 @@ $session = $client->connection()->authenticate(
     email: 'admin@example.test',
     password: 'secret',
 );
+
+$client->connection()->persist($session);
+```
+
+When the user selects a company later, persist the selected UUID too:
+
+```php
+$client->connection()->persist($session, '01985517-991d-714f-b375-9cf8e534a843');
+```
+
+You can also combine both steps:
+
+```php
+$client->connection()->authenticateAndPersist(
+    email: 'admin@example.test',
+    password: 'secret',
+    selectedCompanyUuid: '01985517-991d-714f-b375-9cf8e534a843',
+);
 ```
 
 The returned payload contains the bearer token and the companies that can be bound to the current session.
+
+## Convenience helpers
+
+The connection resource also exposes:
+
+- `persist(ProovitConnectionData|array $connection, ?string $selectedCompanyUuid = null)`
+- `selectCompany(string $companyUuid)`
+- `authenticateAndPersist(string $email, string $password, ?string $selectedCompanyUuid = null)`
+
+These helpers are the recommended way to manage the session when your app wants to separate login from company selection.

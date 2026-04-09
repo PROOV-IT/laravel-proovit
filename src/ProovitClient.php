@@ -35,6 +35,8 @@ use Proovit\LaravelProovit\Resources\TokenResource;
 use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
+use Proovit\LaravelProovit\Support\ProovitSettingsRepository;
+use Psr\Http\Message\ResponseInterface;
 
 final class ProovitClient
 {
@@ -75,6 +77,7 @@ final class ProovitClient
                 $this->config,
                 fn (ProovitConfig $config): ClientInterface => $this->factory->make($config),
             ),
+            app(ProovitSettingsRepository::class),
         );
     }
 
@@ -131,6 +134,16 @@ final class ProovitClient
     public function proofBuilder(): ProofBuilder
     {
         return $this->proofs()->builder();
+    }
+
+    public function download(string $uri, array $options = []): string
+    {
+        return $this->apiClient()->download($uri, $options);
+    }
+
+    public function stream(string $uri, array $options = []): ResponseInterface
+    {
+        return $this->apiClient()->stream($uri, $options);
     }
 
     public function features(): ProovitFeatureManager

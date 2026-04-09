@@ -1,6 +1,7 @@
 # Use cases
 
 - [Connection flow](connection.md)
+- [Events](events.md)
 - [Proof builder](proof-builder.md)
 - [Proof templates](proof-templates.md)
 - [Reference data](reference-data.md)

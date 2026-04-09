@@ -9,6 +9,7 @@ use Proovit\LaravelProovit\Actions\Connection\ResolveProovitContextAction;
 use Proovit\LaravelProovit\Actions\Connection\TestProovitConnectionAction;
 use Proovit\LaravelProovit\DTOs\ProovitConnectionData;
 use Proovit\LaravelProovit\DTOs\ProovitContextData;
+use Proovit\LaravelProovit\Support\ProovitSettingsRepository;
 
 final class ConnectionResource
 {
@@ -16,6 +17,7 @@ final class ConnectionResource
         private readonly TestProovitConnectionAction $action,
         private readonly ResolveProovitContextAction $contextAction,
         private readonly AuthenticateProovitConnectionAction $authenticateAction,
+        private readonly ProovitSettingsRepository $settingsRepository,
     ) {}
 
     public function test(): ProovitConnectionData
@@ -28,8 +30,105 @@ final class ConnectionResource
         return $this->authenticateAction->handle($email, $password);
     }
 
+    public function authenticateAndPersist(string $email, string $password, ?string $selectedCompanyUuid = null): ProovitConnectionData
+    {
+        return $this->persist(
+            $this->authenticate($email, $password),
+            $selectedCompanyUuid,
+        );
+    }
+
+    public function persist(ProovitConnectionData|array $connection, ?string $selectedCompanyUuid = null): ProovitConnectionData
+    {
+        $connectionData = $connection instanceof ProovitConnectionData
+            ? $connection
+            : ProovitConnectionData::fromArray($connection);
+
+        $resolvedCompanyUuid = $this->resolveCompanyUuid($connectionData, $selectedCompanyUuid);
+        $resolvedCompanyName = $this->resolveCompanyName($connectionData, $resolvedCompanyUuid);
+
+        $payload = array_replace_recursive(
+            $this->settingsRepository->all(),
+            [
+                'connection' => array_filter([
+                    'base_url' => $connectionData->baseUrl,
+                    'access_token' => $connectionData->bearerToken,
+                    'selected_company_uuid' => $resolvedCompanyUuid,
+                    'workspace_token' => $resolvedCompanyUuid,
+                    'company_name' => $resolvedCompanyName,
+                    'login_email' => $connectionData->loginEmail,
+                    'companies' => $connectionData->companies,
+                ], static fn (mixed $value): bool => $value !== null && $value !== ''),
+            ],
+        );
+
+        $this->settingsRepository->save($payload);
+
+        return ProovitConnectionData::fromArray([
+            ...$connectionData->raw,
+            'base_url' => $connectionData->baseUrl,
+            'bearer_token' => $connectionData->bearerToken,
+            'selected_company_uuid' => $resolvedCompanyUuid,
+            'workspace_token' => $resolvedCompanyUuid,
+            'company_name' => $resolvedCompanyName,
+            'login_email' => $connectionData->loginEmail,
+            'companies' => $connectionData->companies,
+        ]);
+    }
+
+    public function selectCompany(string $companyUuid): ProovitConnectionData
+    {
+        $settings = $this->settingsRepository->all();
+        $connection = ProovitConnectionData::fromArray((array) ($settings['connection'] ?? $settings));
+
+        if ($connection->baseUrl === null || $connection->bearerToken === null) {
+            throw new \RuntimeException('The ProovIT connection must be authenticated before selecting a company.');
+        }
+
+        return $this->persist($connection, $companyUuid);
+    }
+
     public function context(): ProovitContextData
     {
         return $this->contextAction->handle();
+    }
+
+    private function resolveCompanyUuid(ProovitConnectionData $connection, ?string $selectedCompanyUuid): ?string
+    {
+        $selectedCompanyUuid = trim((string) ($selectedCompanyUuid ?? ''));
+        if ($selectedCompanyUuid !== '') {
+            return $selectedCompanyUuid;
+        }
+
+        $current = trim((string) ($connection->selectedCompanyUuid ?? $connection->workspaceToken ?? ''));
+        if ($current !== '') {
+            return $current;
+        }
+
+        return null;
+    }
+
+    private function resolveCompanyName(ProovitConnectionData $connection, ?string $selectedCompanyUuid): ?string
+    {
+        if ($selectedCompanyUuid === null || $selectedCompanyUuid === '') {
+            return null;
+        }
+
+        foreach ($connection->companies as $company) {
+            if (! is_array($company)) {
+                continue;
+            }
+
+            $uuid = (string) ($company['uuid'] ?? $company['id'] ?? '');
+            if ($uuid !== $selectedCompanyUuid) {
+                continue;
+            }
+
+            $name = trim((string) ($company['name'] ?? ''));
+
+            return $name !== '' ? $name : null;
+        }
+
+        return $connection->companyName;
     }
 }

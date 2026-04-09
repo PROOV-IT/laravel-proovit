@@ -6,6 +6,7 @@ namespace Proovit\LaravelProovit\Actions\Proofs;
 
 use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\DTOs\ProofData;
+use Proovit\LaravelProovit\Events\Proofs\ProofInitialized;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 
 final class InitializeProofAction
@@ -22,6 +23,10 @@ final class InitializeProofAction
             'json' => $payload,
         ]);
 
-        return ProofData::fromArray($response['proof'] ?? $response['data'] ?? $response);
+        $proof = ProofData::fromArray($response['proof'] ?? $response['data'] ?? $response);
+
+        event(new ProofInitialized($proof, $payload, $response));
+
+        return $proof;
     }
 }
