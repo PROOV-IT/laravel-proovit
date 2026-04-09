@@ -18,6 +18,7 @@ use Proovit\LaravelProovit\Actions\Proofs\RevokeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
+use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 use Proovit\LaravelProovit\Resources\ConnectionResource;
@@ -25,7 +26,6 @@ use Proovit\LaravelProovit\Resources\ProofResource;
 use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
-use Proovit\LaravelProovit\Support\ProovitPayloadNormalizer;
 
 final class ProovitClient
 {
@@ -36,7 +36,6 @@ final class ProovitClient
     public function __construct(
         private ProovitConfig $config,
         private readonly ProovitClientFactory $factory = new ProovitClientFactory,
-        private readonly ProovitPayloadNormalizer $payloadNormalizer = new ProovitPayloadNormalizer,
         private readonly ProovitCertificateResolver $certificateResolver = new ProovitCertificateResolver,
     ) {
         $this->config->validate();
@@ -77,7 +76,7 @@ final class ProovitClient
         return new ProofResource(
             new ListProofsAction($api),
             new InitializeProofAction($api),
-            new UploadProofFilesAction($api, $this->payloadNormalizer),
+            new UploadProofFilesAction($api),
             new SignProofAction($api),
             new ShowProofAction($api),
             new GetProofHistoryAction($api),
@@ -87,6 +86,11 @@ final class ProovitClient
             new DeleteProofAction($api),
             $this->certificateResolver,
         );
+    }
+
+    public function proofBuilder(): ProofBuilder
+    {
+        return $this->proofs()->builder();
     }
 
     public function features(): ProovitFeatureManager

@@ -9,7 +9,6 @@ use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitConfigResolver;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
-use Proovit\LaravelProovit\Support\ProovitPayloadNormalizer;
 use Proovit\LaravelProovit\Support\ProovitSettingsRepository;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -40,7 +39,6 @@ final class ProovitServiceProvider extends PackageServiceProvider
             return new ProovitClient(
                 $app->make(ProovitConfig::class),
                 $app->make(ProovitClientFactory::class),
-                $app->make(ProovitPayloadNormalizer::class),
                 $app->make(ProovitCertificateResolver::class),
             );
         });

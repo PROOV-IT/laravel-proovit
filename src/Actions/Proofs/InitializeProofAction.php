@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Proovit\LaravelProovit\Actions\Proofs;
 
+use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\DTOs\ProofData;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 
@@ -13,8 +14,10 @@ final class InitializeProofAction
         private readonly ProovitApiClient $client,
     ) {}
 
-    public function handle(array $payload): ProofData
+    public function handle(array|ProofBuilder $payload): ProofData
     {
+        $payload = $payload instanceof ProofBuilder ? $payload->toInitPayload() : $payload;
+
         $response = $this->client->request('POST', '/v1/proofs/init', [
             'json' => $payload,
         ]);

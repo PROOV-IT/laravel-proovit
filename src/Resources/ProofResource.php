@@ -14,6 +14,9 @@ use Proovit\LaravelProovit\Actions\Proofs\RevokeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
+use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
+use Proovit\LaravelProovit\Builders\Proofs\ProofFilesBuilder;
+use Proovit\LaravelProovit\Builders\Proofs\ProofSignatureBuilder;
 use Proovit\LaravelProovit\DTOs\ProofCertificateData;
 use Proovit\LaravelProovit\DTOs\ProofData;
 use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
@@ -39,17 +42,22 @@ final class ProofResource
         return $this->listAction->handle($query);
     }
 
-    public function init(array $payload): ProofData
+    public function builder(): ProofBuilder
+    {
+        return new ProofBuilder;
+    }
+
+    public function init(array|ProofBuilder $payload): ProofData
     {
         return $this->initializeAction->handle($payload);
     }
 
-    public function uploadFiles(string $proofId, array $files): array
+    public function uploadFiles(string $proofId, array|ProofBuilder|ProofFilesBuilder $files): array
     {
         return $this->uploadAction->handle($proofId, $files);
     }
 
-    public function sign(string $proofId, ?string $signatureBase64 = null, array $clientContext = []): array
+    public function sign(string $proofId, string|ProofBuilder|ProofSignatureBuilder|null $signatureBase64 = null, array $clientContext = []): array
     {
         return $this->signAction->handle($proofId, $signatureBase64, $clientContext);
     }

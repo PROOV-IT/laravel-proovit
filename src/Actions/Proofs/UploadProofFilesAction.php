@@ -4,20 +4,28 @@ declare(strict_types=1);
 
 namespace Proovit\LaravelProovit\Actions\Proofs;
 
+use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
+use Proovit\LaravelProovit\Builders\Proofs\ProofFilesBuilder;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
-use Proovit\LaravelProovit\Support\ProovitPayloadNormalizer;
 
 final class UploadProofFilesAction
 {
     public function __construct(
         private readonly ProovitApiClient $client,
-        private readonly ProovitPayloadNormalizer $normalizer = new ProovitPayloadNormalizer,
     ) {}
 
-    public function handle(string $proofId, array $files): array
+    public function handle(string $proofId, array|ProofBuilder|ProofFilesBuilder $files): array
     {
+        if ($files instanceof ProofBuilder) {
+            $files = $files->files();
+        }
+
+        if (is_array($files)) {
+            $files = ProofFilesBuilder::fromLegacyFiles($files);
+        }
+
         $response = $this->client->request('POST', "/v1/proofs/{$proofId}/files", [
-            'multipart' => $this->normalizer->normalizeFiles($files),
+            'multipart' => $files->toMultipart(),
         ]);
 
         return $response;
