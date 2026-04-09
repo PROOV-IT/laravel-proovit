@@ -29,10 +29,10 @@ composer require proovit/laravel-proovit
 - [API](docs/api.md)
 - [Use cases](docs/use-cases/)
 - [Release notes](docs/release-notes.md)
+- [V1 scope](docs/use-cases/v1-scope.md)
 
 ## Acknowledgements
 
 - [Laravel](https://laravel.com)
 - [Guzzle](https://docs.guzzlephp.org/)
 - [Spatie Laravel Package Tools](https://github.com/spatie/laravel-package-tools)
-

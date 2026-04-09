@@ -10,6 +10,7 @@ use Proovit\LaravelProovit\Actions\Proofs\GetProofCertificateLinkAction;
 use Proovit\LaravelProovit\Actions\Proofs\GetProofHistoryAction;
 use Proovit\LaravelProovit\Actions\Proofs\InitializeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ListProofsAction;
+use Proovit\LaravelProovit\Actions\Proofs\RevokeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
@@ -28,6 +29,7 @@ final class ProofResource
         private readonly GetProofHistoryAction $historyAction,
         private readonly GetProofCertificateLinkAction $certificateLinkAction,
         private readonly DownloadProofCertificateAction $downloadCertificateAction,
+        private readonly RevokeProofAction $revokeAction,
         private readonly DeleteProofAction $deleteAction,
         private readonly ProovitCertificateResolver $certificateResolver,
     ) {}
@@ -70,6 +72,11 @@ final class ProofResource
     public function downloadCertificate(string $proofId): string
     {
         return $this->downloadCertificateAction->handle($proofId);
+    }
+
+    public function revoke(string $proofId, ?string $reason = null): array
+    {
+        return $this->revokeAction->handle($proofId, $reason);
     }
 
     public function certificateFilename(string $proofId): string

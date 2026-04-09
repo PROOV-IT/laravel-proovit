@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Proovit\LaravelProovit;
 
 use GuzzleHttp\ClientInterface;
+use Proovit\LaravelProovit\Actions\Connection\ResolveProovitContextAction;
 use Proovit\LaravelProovit\Actions\Connection\TestProovitConnectionAction;
 use Proovit\LaravelProovit\Actions\Proofs\DeleteProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\DownloadProofCertificateAction;
@@ -12,6 +13,7 @@ use Proovit\LaravelProovit\Actions\Proofs\GetProofCertificateLinkAction;
 use Proovit\LaravelProovit\Actions\Proofs\GetProofHistoryAction;
 use Proovit\LaravelProovit\Actions\Proofs\InitializeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ListProofsAction;
+use Proovit\LaravelProovit\Actions\Proofs\RevokeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
@@ -54,7 +56,13 @@ final class ProovitClient
 
     public function connection(): ConnectionResource
     {
-        return new ConnectionResource(new TestProovitConnectionAction($this->apiClient(), $this->config));
+        return new ConnectionResource(
+            new TestProovitConnectionAction($this->apiClient(), $this->config),
+            new ResolveProovitContextAction(
+                $this->config,
+                $this->features(),
+            ),
+        );
     }
 
     public function proofs(): ProofResource
@@ -70,6 +78,7 @@ final class ProovitClient
             new GetProofHistoryAction($api),
             new GetProofCertificateLinkAction($api),
             new DownloadProofCertificateAction($api),
+            new RevokeProofAction($api),
             new DeleteProofAction($api),
             $this->certificateResolver,
         );
