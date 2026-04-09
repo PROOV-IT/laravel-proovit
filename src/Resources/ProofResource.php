@@ -1,0 +1,77 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Proovit\LaravelProovit\Resources;
+
+use Proovit\LaravelProovit\Actions\Proofs\DeleteProofAction;
+use Proovit\LaravelProovit\Actions\Proofs\DownloadProofCertificateAction;
+use Proovit\LaravelProovit\Actions\Proofs\GetProofCertificateLinkAction;
+use Proovit\LaravelProovit\Actions\Proofs\GetProofHistoryAction;
+use Proovit\LaravelProovit\Actions\Proofs\InitializeProofAction;
+use Proovit\LaravelProovit\Actions\Proofs\ListProofsAction;
+use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
+use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
+use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
+use Proovit\LaravelProovit\DTOs\ProofData;
+
+final class ProofResource
+{
+    public function __construct(
+        private readonly ListProofsAction $listAction,
+        private readonly InitializeProofAction $initializeAction,
+        private readonly UploadProofFilesAction $uploadAction,
+        private readonly SignProofAction $signAction,
+        private readonly ShowProofAction $showAction,
+        private readonly GetProofHistoryAction $historyAction,
+        private readonly GetProofCertificateLinkAction $certificateLinkAction,
+        private readonly DownloadProofCertificateAction $downloadCertificateAction,
+        private readonly DeleteProofAction $deleteAction,
+    ) {
+    }
+
+    public function list(array $query = []): array
+    {
+        return $this->listAction->handle($query);
+    }
+
+    public function init(array $payload): ProofData
+    {
+        return $this->initializeAction->handle($payload);
+    }
+
+    public function uploadFiles(string $proofId, array $files): array
+    {
+        return $this->uploadAction->handle($proofId, $files);
+    }
+
+    public function sign(string $proofId, ?string $signatureBase64 = null, array $clientContext = []): array
+    {
+        return $this->signAction->handle($proofId, $signatureBase64, $clientContext);
+    }
+
+    public function show(string $proofId): ProofData
+    {
+        return $this->showAction->handle($proofId);
+    }
+
+    public function history(string $proofId): array
+    {
+        return $this->historyAction->handle($proofId);
+    }
+
+    public function getCertificateLink(string $proofId): array
+    {
+        return $this->certificateLinkAction->handle($proofId);
+    }
+
+    public function downloadCertificate(string $proofId): string
+    {
+        return $this->downloadCertificateAction->handle($proofId);
+    }
+
+    public function delete(string $proofId): bool
+    {
+        return $this->deleteAction->handle($proofId);
+    }
+}

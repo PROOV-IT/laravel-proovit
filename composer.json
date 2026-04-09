@@ -1,0 +1,75 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "proovit/laravel-proovit",
+  "description": "Laravel 13 SDK for ProovIT proof deposit, certification and certificate retrieval.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.3",
+    "guzzlehttp/guzzle": "^7.9",
+    "illuminate/contracts": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-package-tools": "^1.92"
+  },
+  "require-dev": {
+    "larastan/larastan": "^3.9.3",
+    "laravel/pint": "^1.29.0",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^3.8",
+    "phpstan/phpstan": "^2.1.22"
+  },
+  "autoload": {
+    "psr-4": {
+      "Proovit\\LaravelProovit\\": "src/",
+      "Proovit\\LaravelProovit\\Database\\Factories\\": "database/factories/",
+      "Proovit\\LaravelProovit\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Proovit\\LaravelProovit\\ProovitServiceProvider"
+      ]
+    },
+    "branch-alias": {
+      "dev-dev": "0.1.x-dev"
+    }
+  },
+  "scripts": {
+    "format": [
+      "@php vendor/bin/pint src tests"
+    ],
+    "format:test": [
+      "@php vendor/bin/pint --test src tests"
+    ],
+    "analyse": [
+      "@php vendor/bin/phpstan analyse --ansi --memory-limit=1G"
+    ],
+    "qa": [
+      "@format:test",
+      "@analyse",
+      "@test"
+    ],
+    "test": [
+      "@php vendor/bin/pest"
+    ]
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "platform": {
+      "php": "8.3.30"
+    },
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
