@@ -2,13 +2,15 @@
 
 return [
     'connection' => [
-        'base_url' => env('PROOVIT_BASE_URL', 'https://api.proov-it.online'),
+        'base_url' => env('PROOVIT_BASE_URL', 'https://api.proov-it.online/api'),
         'app_url' => env('PROOVIT_APP_URL', 'https://proov-it.io'),
         'api_key' => env('PROOVIT_API_KEY'),
         'access_token' => env('PROOVIT_ACCESS_TOKEN'),
+        'selected_company_uuid' => env('PROOVIT_SELECTED_COMPANY_UUID', env('PROOVIT_WORKSPACE_TOKEN')),
         'workspace_token' => env('PROOVIT_WORKSPACE_TOKEN'),
         'company_name' => env('PROOVIT_COMPANY_NAME'),
         'login_email' => env('PROOVIT_LOGIN_EMAIL'),
+        'companies' => [],
         'mode' => env('PROOVIT_MODE', 'production'),
         'timeout' => (int) env('PROOVIT_TIMEOUT', 30),
         'connect_timeout' => (int) env('PROOVIT_CONNECT_TIMEOUT', 10),

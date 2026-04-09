@@ -23,9 +23,12 @@ final class TestProovitConnectionAction
             'connected' => true,
             'mode' => $this->config->mode->value,
             'base_url' => $this->config->baseUrl,
+            'bearer_token' => $this->config->accessToken,
+            'selected_company_uuid' => $this->config->selectedCompanyUuid,
             'workspace_token' => $this->config->workspaceToken,
             'company_name' => $this->config->companyName,
             'login_email' => $this->config->loginEmail,
+            'companies' => $this->config->companies,
             'payload' => $payload,
         ] + $payload);
     }

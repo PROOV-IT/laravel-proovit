@@ -17,6 +17,7 @@ This means saved values override the matching `.env` values without requiring yo
 - `connection.login_email`
 - `connection.api_key`
 - `connection.access_token`
+- `connection.selected_company_uuid`
 - `connection.workspace_token`
 - `connection.mode`
 - `connection.timeout`
@@ -31,6 +32,8 @@ This means saved values override the matching `.env` values without requiring yo
 The package stores a single encrypted settings payload in `proovit_settings`.
 
 If the table does not exist yet, the SDK falls back to the `.env` values and keeps working.
+
+`connection.selected_company_uuid` is the canonical key for the active company. `connection.workspace_token` is kept as a backward-compatible alias for older installations.
 
 ### Save flow
 

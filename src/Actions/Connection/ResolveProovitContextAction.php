@@ -24,6 +24,8 @@ final class ResolveProovitContextAction
             'app_url' => $this->config->appUrl,
             'company_name' => $this->config->companyName,
             'login_email' => $this->config->loginEmail,
+            'selected_company_uuid' => $this->config->selectedCompanyUuid,
+            'companies' => $this->config->companies,
             'mode' => $this->config->mode->value,
             'features' => $this->features->all(),
             'docs' => $this->config->docs,

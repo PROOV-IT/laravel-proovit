@@ -10,7 +10,8 @@ The ProovIT SDK keeps working with only environment variables, but you can persi
 - `connection.login_email`
 - `connection.api_key`
 - `connection.access_token`
-- `connection.workspace_token`
+- `connection.selected_company_uuid`
+- `connection.workspace_token` as a compatibility alias
 - `connection.mode`
 - `connection.timeout`
 - `connection.connect_timeout`

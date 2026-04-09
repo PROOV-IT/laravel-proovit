@@ -10,9 +10,12 @@ final readonly class ProovitConnectionData
         public bool $connected,
         public ?string $mode = null,
         public ?string $baseUrl = null,
+        public ?string $bearerToken = null,
+        public ?string $selectedCompanyUuid = null,
         public ?string $workspaceToken = null,
         public ?string $companyName = null,
         public ?string $loginEmail = null,
+        public array $companies = [],
         public array $raw = [],
     ) {}
 
@@ -22,9 +25,12 @@ final readonly class ProovitConnectionData
             connected: (bool) ($data['connected'] ?? true),
             mode: $data['mode'] ?? null,
             baseUrl: $data['base_url'] ?? null,
+            bearerToken: $data['bearer_token'] ?? $data['access_token'] ?? null,
+            selectedCompanyUuid: $data['selected_company_uuid'] ?? $data['workspace_token'] ?? null,
             workspaceToken: $data['workspace_token'] ?? null,
             companyName: $data['company_name'] ?? null,
             loginEmail: $data['login_email'] ?? null,
+            companies: (array) ($data['companies'] ?? []),
             raw: $data,
         );
     }

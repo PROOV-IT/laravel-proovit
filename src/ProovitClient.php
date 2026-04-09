@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Proovit\LaravelProovit;
 
 use GuzzleHttp\ClientInterface;
+use Proovit\LaravelProovit\Actions\Connection\AuthenticateProovitConnectionAction;
 use Proovit\LaravelProovit\Actions\Connection\ResolveProovitContextAction;
 use Proovit\LaravelProovit\Actions\Connection\TestProovitConnectionAction;
 use Proovit\LaravelProovit\Actions\Proofs\DeleteProofAction;
@@ -62,6 +63,10 @@ final class ProovitClient
                 $this->config,
                 $this->features(),
             ),
+            new AuthenticateProovitConnectionAction(
+                $this->config,
+                fn (ProovitConfig $config): ClientInterface => $this->factory->make($config),
+            ),
         );
     }
 
@@ -105,9 +110,11 @@ final class ProovitClient
                     appUrl: $config->appUrl,
                     apiKey: $config->apiKey,
                     accessToken: $this->accessToken,
+                    selectedCompanyUuid: $config->selectedCompanyUuid,
                     workspaceToken: $config->workspaceToken,
                     companyName: $config->companyName,
                     loginEmail: $config->loginEmail,
+                    companies: $config->companies,
                     mode: $config->mode,
                     timeout: $config->timeout,
                     connectTimeout: $config->connectTimeout,

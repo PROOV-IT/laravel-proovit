@@ -17,11 +17,15 @@ final class ProovitConfig
 
     public readonly ?string $accessToken;
 
+    public readonly ?string $selectedCompanyUuid;
+
     public readonly ?string $workspaceToken;
 
     public readonly ?string $companyName;
 
     public readonly ?string $loginEmail;
+
+    public readonly array $companies;
 
     public readonly ProovitMode $mode;
 
@@ -54,9 +58,11 @@ final class ProovitConfig
         ?string $appUrl = null,
         ?string $apiKey = null,
         ?string $accessToken = null,
+        ?string $selectedCompanyUuid = null,
         ?string $workspaceToken = null,
         ?string $companyName = null,
         ?string $loginEmail = null,
+        array $companies = [],
         ProovitMode $mode = ProovitMode::Production,
         int $timeout = 30,
         int $connectTimeout = 10,
@@ -70,14 +76,16 @@ final class ProovitConfig
         array $exports = [],
         array $audit = [],
         array $docs = [],
-    ) {
-        $this->baseUrl = rtrim($baseUrl, '/');
+        ) {
+        $this->baseUrl = self::normalizeBaseUrl($baseUrl);
         $this->appUrl = $appUrl !== null ? rtrim($appUrl, '/') : null;
         $this->apiKey = $apiKey;
         $this->accessToken = $accessToken;
-        $this->workspaceToken = $workspaceToken;
+        $this->selectedCompanyUuid = $selectedCompanyUuid !== null && $selectedCompanyUuid !== '' ? $selectedCompanyUuid : ($workspaceToken !== null && $workspaceToken !== '' ? $workspaceToken : null);
+        $this->workspaceToken = $workspaceToken !== null && $workspaceToken !== '' ? $workspaceToken : $this->selectedCompanyUuid;
         $this->companyName = $companyName;
         $this->loginEmail = $loginEmail;
+        $this->companies = $companies;
         $this->mode = $mode;
         $this->timeout = $timeout;
         $this->connectTimeout = $connectTimeout;
@@ -119,9 +127,11 @@ final class ProovitConfig
             appUrl: $connection['app_url'] ?? null,
             apiKey: $connection['api_key'] ?? null,
             accessToken: $connection['access_token'] ?? null,
+            selectedCompanyUuid: $connection['selected_company_uuid'] ?? $connection['workspace_token'] ?? null,
             workspaceToken: $connection['workspace_token'] ?? null,
             companyName: $connection['company_name'] ?? null,
             loginEmail: $connection['login_email'] ?? null,
+            companies: (array) ($connection['companies'] ?? []),
             mode: $proovitMode,
             timeout: (int) ($connection['timeout'] ?? 30),
             connectTimeout: (int) ($connection['connect_timeout'] ?? 10),
@@ -157,9 +167,11 @@ final class ProovitConfig
                 'app_url' => $this->appUrl,
                 'api_key' => $this->apiKey,
                 'access_token' => $this->accessToken,
-                'workspace_token' => $this->workspaceToken,
+                'selected_company_uuid' => $this->selectedCompanyUuid,
+                'workspace_token' => $this->workspaceToken ?? $this->selectedCompanyUuid,
                 'company_name' => $this->companyName,
                 'login_email' => $this->loginEmail,
+                'companies' => $this->companies,
                 'mode' => $this->mode->value,
                 'timeout' => $this->timeout,
                 'connect_timeout' => $this->connectTimeout,
@@ -191,11 +203,30 @@ final class ProovitConfig
             $headers['Authorization'] = sprintf('Bearer %s', $this->accessToken);
         }
 
-        if ($this->workspaceToken !== null && $this->workspaceToken !== '') {
-            $headers['X-WORKSPACE-TOKEN'] = $this->workspaceToken;
+        $selectedCompanyUuid = $this->selectedCompanyUuid ?? $this->workspaceToken;
+
+        if ($selectedCompanyUuid !== null && $selectedCompanyUuid !== '') {
+            $headers['X-COMPANY-TOKEN'] = $selectedCompanyUuid;
+            $headers['X-COMPANY-ID'] = $selectedCompanyUuid;
         }
 
         return $headers;
+    }
+
+    private static function normalizeBaseUrl(string $baseUrl): string
+    {
+        $baseUrl = rtrim($baseUrl, '/');
+
+        if ($baseUrl === '') {
+            return $baseUrl;
+        }
+
+        $path = parse_url($baseUrl, PHP_URL_PATH);
+        if (is_string($path) && $path !== '' && $path !== '/') {
+            return $baseUrl;
+        }
+
+        return $baseUrl.'/api';
     }
 
     public function featureEnabled(string $feature, bool $default = false): bool
