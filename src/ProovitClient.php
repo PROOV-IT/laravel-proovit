@@ -14,6 +14,7 @@ use Proovit\LaravelProovit\Actions\Proofs\GetProofCertificateLinkAction;
 use Proovit\LaravelProovit\Actions\Proofs\GetProofHistoryAction;
 use Proovit\LaravelProovit\Actions\Proofs\InitializeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ListProofsAction;
+use Proovit\LaravelProovit\Actions\Proofs\ListProofTemplatesAction;
 use Proovit\LaravelProovit\Actions\Proofs\RevokeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
@@ -23,6 +24,7 @@ use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 use Proovit\LaravelProovit\Resources\ConnectionResource;
 use Proovit\LaravelProovit\Resources\ProofResource;
+use Proovit\LaravelProovit\Resources\ProofTemplateResource;
 use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
@@ -85,6 +87,13 @@ final class ProovitClient
             new RevokeProofAction($api),
             new DeleteProofAction($api),
             $this->certificateResolver,
+        );
+    }
+
+    public function proofTemplates(): ProofTemplateResource
+    {
+        return new ProofTemplateResource(
+            new ListProofTemplatesAction($this->apiClient()),
         );
     }
 
