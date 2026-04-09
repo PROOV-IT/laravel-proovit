@@ -13,7 +13,7 @@ final class ProovitClientFactory
     public function make(ProovitConfig $config): ClientInterface
     {
         return new Client([
-            'base_uri' => $config->baseUrl,
+            'base_uri' => rtrim($config->baseUrl, '/').'/',
             'timeout' => $config->timeout,
             'connect_timeout' => $config->connectTimeout,
             'verify' => $config->verifyTls,

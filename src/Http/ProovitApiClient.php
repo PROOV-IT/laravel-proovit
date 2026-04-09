@@ -41,7 +41,7 @@ final class ProovitApiClient
     private function send(string $method, string $uri, array $options = []): ResponseInterface
     {
         try {
-            return $this->http->request($method, $uri, $options);
+            return $this->http->request($method, $this->normalizeUri($uri), $options);
         } catch (RequestException $exception) {
             if ($exception->hasResponse()) {
                 $this->throwApiException($exception->getResponse());
@@ -93,5 +93,12 @@ final class ProovitApiClient
             $response->getStatusCode(),
             $payload,
         );
+    }
+
+    private function normalizeUri(string $uri): string
+    {
+        $uri = ltrim($uri, '/');
+
+        return $uri === '' ? '/' : $uri;
     }
 }
