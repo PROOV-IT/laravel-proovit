@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Proovit\LaravelProovit;
 
 use GuzzleHttp\ClientInterface;
+use Proovit\LaravelProovit\Actions\Categories\ListCategoriesAction;
 use Proovit\LaravelProovit\Actions\Connection\AuthenticateProovitConnectionAction;
 use Proovit\LaravelProovit\Actions\Connection\ResolveProovitContextAction;
 use Proovit\LaravelProovit\Actions\Connection\TestProovitConnectionAction;
+use Proovit\LaravelProovit\Actions\Folders\ListFoldersAction;
 use Proovit\LaravelProovit\Actions\Proofs\DeleteProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\DownloadProofCertificateAction;
 use Proovit\LaravelProovit\Actions\Proofs\GetProofCertificateLinkAction;
@@ -19,12 +21,17 @@ use Proovit\LaravelProovit\Actions\Proofs\RevokeProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
+use Proovit\LaravelProovit\Actions\Tokens\GetTokenBalanceAction;
+use Proovit\LaravelProovit\Actions\Tokens\ReserveTokenAction;
 use Proovit\LaravelProovit\Builders\Proofs\ProofBuilder;
 use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
+use Proovit\LaravelProovit\Resources\CategoryResource;
 use Proovit\LaravelProovit\Resources\ConnectionResource;
+use Proovit\LaravelProovit\Resources\FolderResource;
 use Proovit\LaravelProovit\Resources\ProofResource;
 use Proovit\LaravelProovit\Resources\ProofTemplateResource;
+use Proovit\LaravelProovit\Resources\TokenResource;
 use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
 use Proovit\LaravelProovit\Support\ProovitFeatureManager;
@@ -94,6 +101,30 @@ final class ProovitClient
     {
         return new ProofTemplateResource(
             new ListProofTemplatesAction($this->apiClient()),
+        );
+    }
+
+    public function categories(): CategoryResource
+    {
+        return new CategoryResource(
+            new ListCategoriesAction($this->apiClient()),
+        );
+    }
+
+    public function folders(): FolderResource
+    {
+        return new FolderResource(
+            new ListFoldersAction($this->apiClient()),
+        );
+    }
+
+    public function tokens(): TokenResource
+    {
+        $api = $this->apiClient();
+
+        return new TokenResource(
+            new GetTokenBalanceAction($api),
+            new ReserveTokenAction($api),
         );
     }
 
