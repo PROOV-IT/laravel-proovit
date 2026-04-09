@@ -21,7 +21,7 @@ $proofBuilder = $client->proofBuilder()
     ->withTokenReservationId('019d72c6-4b75-7149-b94c-f7ddfb58df02')
     ->withMetadata(static function (ProofMetadataBuilder $metadata): void {
         $metadata
-            ->withShareEmails(['cyrilcaturani@gmail.com'])
+            ->withShareEmails(['jane.doe@example.com'])
             ->withAnonymous(false)
             ->withLocation('43.7265, 5.5434', 43.7265, 5.5434)
             ->withCustomFields([

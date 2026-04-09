@@ -30,6 +30,7 @@ composer require proovit/laravel-proovit
 - [API](docs/api.md)
 - [Use cases](docs/use-cases/)
 - [Proof templates](docs/use-cases/proof-templates.md)
+- [Reference data](docs/use-cases/reference-data.md)
 - [Proof builder](docs/use-cases/proof-builder.md)
 - [Persistent configuration](docs/use-cases/settings-page.md)
 - [Release notes](docs/release-notes.md)
