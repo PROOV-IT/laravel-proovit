@@ -43,3 +43,39 @@ it('authenticates against the api and loads companies', function (): void {
         ->and($connection->companies)->toHaveCount(1)
         ->and($connection->companies[0]['uuid'])->toBe('company-uuid');
 });
+
+it('uses a temporary config override when authenticating', function (): void {
+    $handler = HandlerStack::create(new MockHandler([
+        new Response(201, [], json_encode(['token' => 'bearer-token'], JSON_THROW_ON_ERROR)),
+        new Response(200, [], json_encode(['data' => []], JSON_THROW_ON_ERROR)),
+    ]));
+
+    $httpClient = new Client(['handler' => $handler]);
+
+    $injectedConfig = new ProovitConfig(
+        baseUrl: 'https://api.injected.test/api',
+        mode: ProovitMode::Production,
+    );
+    $overrideConfig = new ProovitConfig(
+        baseUrl: 'https://api.override.test/api',
+        mode: ProovitMode::Staging,
+    );
+
+    $receivedConfig = null;
+
+    $action = new AuthenticateProovitConnectionAction(
+        $injectedConfig,
+        function (ProovitConfig $config) use (&$receivedConfig, $httpClient): Client {
+            $receivedConfig = $config;
+
+            return $httpClient;
+        },
+    );
+
+    $connection = $action->handle('admin@example.test', 'secret', $overrideConfig);
+
+    expect($receivedConfig)->not->toBeNull()
+        ->and($receivedConfig->baseUrl)->toBe('https://api.override.test/api')
+        ->and($connection->baseUrl)->toBe('https://api.override.test/api')
+        ->and($connection->mode)->toBe(ProovitMode::Staging->value);
+});

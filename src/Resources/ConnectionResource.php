@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Proovit\LaravelProovit\Resources;
 
-use Proovit\LaravelProovit\Actions\Connection\ResolveProovitContextAction;
 use Proovit\LaravelProovit\Actions\Connection\AuthenticateProovitConnectionAction;
+use Proovit\LaravelProovit\Actions\Connection\ResolveProovitContextAction;
 use Proovit\LaravelProovit\Actions\Connection\TestProovitConnectionAction;
 use Proovit\LaravelProovit\DTOs\ProovitConnectionData;
 use Proovit\LaravelProovit\DTOs\ProovitContextData;

@@ -76,7 +76,7 @@ final class ProovitConfig
         array $exports = [],
         array $audit = [],
         array $docs = [],
-        ) {
+    ) {
         $this->baseUrl = self::normalizeBaseUrl($baseUrl);
         $this->appUrl = $appUrl !== null ? rtrim($appUrl, '/') : null;
         $this->apiKey = $apiKey;

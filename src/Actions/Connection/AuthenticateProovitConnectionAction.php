@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Proovit\LaravelProovit\Actions\Connection;
 
 use Closure;
-use InvalidArgumentException;
 use GuzzleHttp\ClientInterface;
+use InvalidArgumentException;
 use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\DTOs\ProovitConnectionData;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
@@ -19,9 +19,11 @@ final class AuthenticateProovitConnectionAction
         private readonly ?Closure $clientFactory = null,
     ) {}
 
-    public function handle(string $email, string $password): ProovitConnectionData
+    public function handle(string $email, string $password, ?ProovitConfig $config = null): ProovitConnectionData
     {
-        $loginClient = new ProovitApiClient($this->makeClient($this->config));
+        $config ??= $this->config;
+
+        $loginClient = new ProovitApiClient($this->makeClient($config));
         $loginPayload = $loginClient->request('POST', '/v1/auth/login', [
             'json' => [
                 'email' => $email,
@@ -35,28 +37,28 @@ final class AuthenticateProovitConnectionAction
         }
 
         $authenticatedConfig = new ProovitConfig(
-            baseUrl: $this->config->baseUrl,
-            appUrl: $this->config->appUrl,
-            apiKey: $this->config->apiKey,
+            baseUrl: $config->baseUrl,
+            appUrl: $config->appUrl,
+            apiKey: $config->apiKey,
             accessToken: $token,
-            selectedCompanyUuid: $this->config->selectedCompanyUuid,
-            workspaceToken: $this->config->workspaceToken,
-            companyName: $this->config->companyName,
+            selectedCompanyUuid: $config->selectedCompanyUuid,
+            workspaceToken: $config->workspaceToken,
+            companyName: $config->companyName,
             loginEmail: $email,
-            companies: $this->config->companies,
-            mode: $this->config->mode,
-            timeout: $this->config->timeout,
-            connectTimeout: $this->config->connectTimeout,
-            verifyTls: $this->config->verifyTls,
-            retryAttempts: $this->config->retryAttempts,
-            retrySleepMs: $this->config->retrySleepMs,
-            healthEndpoint: $this->config->healthEndpoint,
-            api: $this->config->api,
-            features: $this->config->features,
-            certificates: $this->config->certificates,
-            exports: $this->config->exports,
-            audit: $this->config->audit,
-            docs: $this->config->docs,
+            companies: $config->companies,
+            mode: $config->mode,
+            timeout: $config->timeout,
+            connectTimeout: $config->connectTimeout,
+            verifyTls: $config->verifyTls,
+            retryAttempts: $config->retryAttempts,
+            retrySleepMs: $config->retrySleepMs,
+            healthEndpoint: $config->healthEndpoint,
+            api: $config->api,
+            features: $config->features,
+            certificates: $config->certificates,
+            exports: $config->exports,
+            audit: $config->audit,
+            docs: $config->docs,
         );
 
         $companiesClient = new ProovitApiClient($this->makeClient($authenticatedConfig));
@@ -65,8 +67,8 @@ final class AuthenticateProovitConnectionAction
 
         return ProovitConnectionData::fromArray([
             'connected' => true,
-            'mode' => $this->config->mode->value,
-            'base_url' => $this->config->baseUrl,
+            'mode' => $config->mode->value,
+            'base_url' => $config->baseUrl,
             'bearer_token' => $token,
             'selected_company_uuid' => null,
             'workspace_token' => null,
