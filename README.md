@@ -5,6 +5,7 @@ Laravel 13 SDK for the ProovIT proof deposit and certification service.
 ## What it does
 
 - centralizes the HTTP client and configuration for the ProovIT service
+- lists proof templates for the connected company
 - creates and uploads proofs
 - signs proofs
 - retrieves proof history and certificate links
