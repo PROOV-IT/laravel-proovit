@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\ProovitClient;
+use Proovit\LaravelProovit\Support\ProovitConfigResolver;
+use Proovit\LaravelProovit\Support\ProovitFeatureManager;
 
 it('registers the package configuration and client', function (): void {
     expect(config('proovit.connection.base_url'))->toBeString();
@@ -13,4 +15,7 @@ it('registers the package configuration and client', function (): void {
 
     $client = app(ProovitClient::class);
     expect($client)->toBeInstanceOf(ProovitClient::class);
+
+    expect(app(ProovitConfigResolver::class))->toBeInstanceOf(ProovitConfigResolver::class);
+    expect(app(ProovitFeatureManager::class))->toBeInstanceOf(ProovitFeatureManager::class);
 });

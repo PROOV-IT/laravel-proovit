@@ -11,8 +11,7 @@ final readonly class ProofFileData
         public string $contents,
         public ?string $filename = null,
         public ?string $mimeType = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

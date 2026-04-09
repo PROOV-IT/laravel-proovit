@@ -11,8 +11,7 @@ final class ShowProofAction
 {
     public function __construct(
         private readonly ProovitApiClient $client,
-    ) {
-    }
+    ) {}
 
     public function handle(string $proofId): ProofData
     {

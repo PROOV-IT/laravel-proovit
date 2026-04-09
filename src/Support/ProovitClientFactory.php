@@ -17,6 +17,7 @@ final class ProovitClientFactory
             'timeout' => $config->timeout,
             'connect_timeout' => $config->connectTimeout,
             'verify' => $config->verifyTls,
+            'http_errors' => false,
             'headers' => $config->headers(),
         ]);
     }

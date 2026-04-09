@@ -11,9 +11,8 @@ final class UploadProofFilesAction
 {
     public function __construct(
         private readonly ProovitApiClient $client,
-        private readonly ProovitPayloadNormalizer $normalizer = new ProovitPayloadNormalizer(),
-    ) {
-    }
+        private readonly ProovitPayloadNormalizer $normalizer = new ProovitPayloadNormalizer,
+    ) {}
 
     public function handle(string $proofId, array $files): array
     {

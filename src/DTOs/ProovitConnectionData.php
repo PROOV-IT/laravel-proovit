@@ -12,8 +12,7 @@ final readonly class ProovitConnectionData
         public ?string $baseUrl = null,
         public ?string $workspaceToken = null,
         public array $raw = [],
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

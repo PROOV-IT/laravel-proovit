@@ -16,11 +16,32 @@ return [
         'health_endpoint' => env('PROOVIT_HEALTH_ENDPOINT', '/v1/health'),
     ],
 
+    'api' => [
+        'version' => env('PROOVIT_API_VERSION', 'v1'),
+        'proofs_path' => env('PROOVIT_PROOFS_PATH', '/v1/proofs'),
+        'certificates_path' => env('PROOVIT_CERTIFICATES_PATH', '/v1/certificates'),
+    ],
+
     'features' => [
         'proofs' => true,
         'certificates' => true,
         'exports' => true,
         'audit' => true,
+    ],
+
+    'certificates' => [
+        'default_extension' => env('PROOVIT_CERTIFICATE_EXTENSION', 'pdf'),
+        'filename_prefix' => env('PROOVIT_CERTIFICATE_PREFIX', 'proovit-certificate'),
+    ],
+
+    'exports' => [
+        'default_disk' => env('PROOVIT_EXPORT_DISK', 'local'),
+        'keep_days' => (int) env('PROOVIT_EXPORT_KEEP_DAYS', 30),
+    ],
+
+    'audit' => [
+        'enabled' => env('PROOVIT_AUDIT_ENABLED', true),
+        'channel' => env('PROOVIT_AUDIT_CHANNEL', 'stack'),
     ],
 
     'docs' => [

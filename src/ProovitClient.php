@@ -19,18 +19,22 @@ use Proovit\LaravelProovit\Config\ProovitConfig;
 use Proovit\LaravelProovit\Http\ProovitApiClient;
 use Proovit\LaravelProovit\Resources\ConnectionResource;
 use Proovit\LaravelProovit\Resources\ProofResource;
+use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 use Proovit\LaravelProovit\Support\ProovitClientFactory;
+use Proovit\LaravelProovit\Support\ProovitFeatureManager;
 use Proovit\LaravelProovit\Support\ProovitPayloadNormalizer;
 
 final class ProovitClient
 {
     private ?ClientInterface $http = null;
+
     private ?string $accessToken = null;
 
     public function __construct(
         private ProovitConfig $config,
-        private readonly ProovitClientFactory $factory = new ProovitClientFactory(),
-        private readonly ProovitPayloadNormalizer $payloadNormalizer = new ProovitPayloadNormalizer(),
+        private readonly ProovitClientFactory $factory = new ProovitClientFactory,
+        private readonly ProovitPayloadNormalizer $payloadNormalizer = new ProovitPayloadNormalizer,
+        private readonly ProovitCertificateResolver $certificateResolver = new ProovitCertificateResolver,
     ) {
         $this->config->validate();
     }
@@ -67,7 +71,13 @@ final class ProovitClient
             new GetProofCertificateLinkAction($api),
             new DownloadProofCertificateAction($api),
             new DeleteProofAction($api),
+            $this->certificateResolver,
         );
+    }
+
+    public function features(): ProovitFeatureManager
+    {
+        return new ProovitFeatureManager($this->config);
     }
 
     private function apiClient(): ProovitApiClient

@@ -11,8 +11,7 @@ final class ConnectionResource
 {
     public function __construct(
         private readonly TestProovitConnectionAction $action,
-    ) {
-    }
+    ) {}
 
     public function test(): ProovitConnectionData
     {

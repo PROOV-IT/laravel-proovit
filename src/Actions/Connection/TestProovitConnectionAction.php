@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Proovit\LaravelProovit\Actions\Connection;
 
 use Proovit\LaravelProovit\Config\ProovitConfig;
-use Proovit\LaravelProovit\Http\ProovitApiClient;
 use Proovit\LaravelProovit\DTOs\ProovitConnectionData;
+use Proovit\LaravelProovit\Http\ProovitApiClient;
 
 final class TestProovitConnectionAction
 {
     public function __construct(
         private readonly ProovitApiClient $client,
         private readonly ProovitConfig $config,
-    ) {
-    }
+    ) {}
 
     public function handle(): ProovitConnectionData
     {

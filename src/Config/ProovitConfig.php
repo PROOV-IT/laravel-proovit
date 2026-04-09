@@ -7,25 +7,82 @@ namespace Proovit\LaravelProovit\Config;
 use InvalidArgumentException;
 use Proovit\LaravelProovit\Enums\ProovitMode;
 
-final readonly class ProovitConfig
+final class ProovitConfig
 {
+    public readonly string $baseUrl;
+
+    public readonly ?string $appUrl;
+
+    public readonly ?string $apiKey;
+
+    public readonly ?string $accessToken;
+
+    public readonly ?string $workspaceToken;
+
+    public readonly ProovitMode $mode;
+
+    public readonly int $timeout;
+
+    public readonly int $connectTimeout;
+
+    public readonly bool $verifyTls;
+
+    public readonly int $retryAttempts;
+
+    public readonly int $retrySleepMs;
+
+    public readonly string $healthEndpoint;
+
+    public readonly array $api;
+
+    public readonly array $features;
+
+    public readonly array $certificates;
+
+    public readonly array $exports;
+
+    public readonly array $audit;
+
+    public readonly array $docs;
+
     public function __construct(
-        public string $baseUrl,
-        public ?string $appUrl = null,
-        public ?string $apiKey = null,
-        public ?string $accessToken = null,
-        public ?string $workspaceToken = null,
-        public ProovitMode $mode = ProovitMode::Production,
-        public int $timeout = 30,
-        public int $connectTimeout = 10,
-        public bool $verifyTls = true,
-        public int $retryAttempts = 0,
-        public int $retrySleepMs = 250,
-        public string $healthEndpoint = '/v1/health',
+        string $baseUrl,
+        ?string $appUrl = null,
+        ?string $apiKey = null,
+        ?string $accessToken = null,
+        ?string $workspaceToken = null,
+        ProovitMode $mode = ProovitMode::Production,
+        int $timeout = 30,
+        int $connectTimeout = 10,
+        bool $verifyTls = true,
+        int $retryAttempts = 0,
+        int $retrySleepMs = 250,
+        string $healthEndpoint = '/v1/health',
+        array $api = [],
+        array $features = [],
+        array $certificates = [],
+        array $exports = [],
+        array $audit = [],
+        array $docs = [],
     ) {
-        $this->baseUrl = rtrim($this->baseUrl, '/');
-        $this->appUrl = $this->appUrl !== null ? rtrim($this->appUrl, '/') : null;
-        $this->healthEndpoint = '/' . ltrim($this->healthEndpoint, '/');
+        $this->baseUrl = rtrim($baseUrl, '/');
+        $this->appUrl = $appUrl !== null ? rtrim($appUrl, '/') : null;
+        $this->apiKey = $apiKey;
+        $this->accessToken = $accessToken;
+        $this->workspaceToken = $workspaceToken;
+        $this->mode = $mode;
+        $this->timeout = $timeout;
+        $this->connectTimeout = $connectTimeout;
+        $this->verifyTls = $verifyTls;
+        $this->retryAttempts = $retryAttempts;
+        $this->retrySleepMs = $retrySleepMs;
+        $this->healthEndpoint = '/'.ltrim($healthEndpoint, '/');
+        $this->api = $api;
+        $this->features = $features;
+        $this->certificates = $certificates;
+        $this->exports = $exports;
+        $this->audit = $audit;
+        $this->docs = $docs;
     }
 
     public static function fromArray(array $config): self
@@ -62,6 +119,12 @@ final readonly class ProovitConfig
             retryAttempts: (int) ($connection['retry_attempts'] ?? 0),
             retrySleepMs: (int) ($connection['retry_sleep_ms'] ?? 250),
             healthEndpoint: (string) ($connection['health_endpoint'] ?? '/v1/health'),
+            api: (array) ($config['api'] ?? []),
+            features: (array) ($config['features'] ?? []),
+            certificates: (array) ($config['certificates'] ?? []),
+            exports: (array) ($config['exports'] ?? []),
+            audit: (array) ($config['audit'] ?? []),
+            docs: (array) ($config['docs'] ?? []),
         );
     }
 
@@ -93,6 +156,12 @@ final readonly class ProovitConfig
                 'retry_sleep_ms' => $this->retrySleepMs,
                 'health_endpoint' => $this->healthEndpoint,
             ],
+            'api' => $this->api,
+            'features' => $this->features,
+            'certificates' => $this->certificates,
+            'exports' => $this->exports,
+            'audit' => $this->audit,
+            'docs' => $this->docs,
         ];
     }
 
@@ -115,5 +184,10 @@ final readonly class ProovitConfig
         }
 
         return $headers;
+    }
+
+    public function featureEnabled(string $feature, bool $default = false): bool
+    {
+        return (bool) ($this->features[$feature] ?? $default);
     }
 }

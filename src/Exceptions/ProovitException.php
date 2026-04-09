@@ -6,6 +6,4 @@ namespace Proovit\LaravelProovit\Exceptions;
 
 use RuntimeException;
 
-class ProovitException extends RuntimeException
-{
-}
+class ProovitException extends RuntimeException {}

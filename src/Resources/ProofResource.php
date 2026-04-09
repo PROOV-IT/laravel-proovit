@@ -13,7 +13,9 @@ use Proovit\LaravelProovit\Actions\Proofs\ListProofsAction;
 use Proovit\LaravelProovit\Actions\Proofs\ShowProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\SignProofAction;
 use Proovit\LaravelProovit\Actions\Proofs\UploadProofFilesAction;
+use Proovit\LaravelProovit\DTOs\ProofCertificateData;
 use Proovit\LaravelProovit\DTOs\ProofData;
+use Proovit\LaravelProovit\Support\ProovitCertificateResolver;
 
 final class ProofResource
 {
@@ -27,8 +29,8 @@ final class ProofResource
         private readonly GetProofCertificateLinkAction $certificateLinkAction,
         private readonly DownloadProofCertificateAction $downloadCertificateAction,
         private readonly DeleteProofAction $deleteAction,
-    ) {
-    }
+        private readonly ProovitCertificateResolver $certificateResolver,
+    ) {}
 
     public function list(array $query = []): array
     {
@@ -60,7 +62,7 @@ final class ProofResource
         return $this->historyAction->handle($proofId);
     }
 
-    public function getCertificateLink(string $proofId): array
+    public function getCertificateLink(string $proofId): ProofCertificateData
     {
         return $this->certificateLinkAction->handle($proofId);
     }
@@ -68,6 +70,13 @@ final class ProofResource
     public function downloadCertificate(string $proofId): string
     {
         return $this->downloadCertificateAction->handle($proofId);
+    }
+
+    public function certificateFilename(string $proofId): string
+    {
+        return $this->certificateResolver->filename(
+            $this->certificateLinkAction->handle($proofId)
+        );
     }
 
     public function delete(string $proofId): bool

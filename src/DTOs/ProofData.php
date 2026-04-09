@@ -15,8 +15,7 @@ final readonly class ProofData
         public ?string $signedAt = null,
         public ?string $certificateUrl = null,
         public array $raw = [],
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {

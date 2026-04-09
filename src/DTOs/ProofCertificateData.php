@@ -11,8 +11,7 @@ final readonly class ProofCertificateData
         public ?string $url = null,
         public ?string $downloadedAt = null,
         public array $raw = [],
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
