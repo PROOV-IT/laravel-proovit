@@ -38,6 +38,24 @@ final class ConnectionResource
         );
     }
 
+    public function refreshBearer(?string $selectedCompanyUuid = null): ProovitConnectionData
+    {
+        $settings = $this->settingsRepository->all();
+        $connection = ProovitConnectionData::fromArray((array) ($settings['connection'] ?? $settings));
+
+        $email = trim((string) ($connection->loginEmail ?? ''));
+        $password = trim((string) (data_get($settings, 'connection.login_password', data_get($settings, 'login_password', ''))));
+
+        if ($email === '' || $password === '') {
+            throw new \RuntimeException('Stored ProovIT credentials are required to refresh the bearer token.');
+        }
+
+        return $this->persist(
+            $this->authenticate($email, $password),
+            $selectedCompanyUuid ?? $connection->selectedCompanyUuid ?? $connection->workspaceToken,
+        );
+    }
+
     public function persist(ProovitConnectionData|array $connection, ?string $selectedCompanyUuid = null): ProovitConnectionData
     {
         $connectionData = $connection instanceof ProovitConnectionData

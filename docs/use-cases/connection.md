@@ -7,6 +7,7 @@ The SDK is designed around a simple ProovIT authentication flow:
 3. fetch the list of companies available to the user
 4. persist the session data in the package settings store
 5. select the company UUID to scope the following requests
+6. refresh the bearer later when the stored session expires or is revoked
 
 For application code, the easiest path is:
 
@@ -14,6 +15,7 @@ For application code, the easiest path is:
 2. persist the returned session
 3. select the company UUID once the user has picked one
 4. reuse the saved session on later requests
+5. call `refreshBearer()` when the API starts rejecting the current bearer
 
 ## Base URL
 
@@ -33,6 +35,17 @@ The client sends the following headers when they are available:
 - `X-COMPANY-ID: <company-uuid>`
 
 The selected company UUID is stored under `connection.selected_company_uuid`. `connection.workspace_token` remains available as a compatibility alias.
+
+## Refreshing the bearer
+
+When the stored bearer token becomes invalid, you can refresh it from the saved login credentials:
+
+```php
+$client = app(\Proovit\LaravelProovit\ProovitClient::class);
+$connection = $client->connection()->refreshBearer();
+```
+
+The helper reuses the persisted login email and password, requests a new bearer token, and keeps the selected company UUID when possible.
 
 ## Login response
 
