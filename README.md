@@ -37,6 +37,13 @@ composer require proovit/laravel-proovit
 - [Release notes](docs/release-notes.md)
 - [V1 scope](docs/use-cases/v1-scope.md)
 
+## Release notes
+
+### 0.1.0
+
+- Initial ProovIT Laravel SDK release
+- Connection, proof lifecycle, templates, reference data, and persistent configuration support
+
 ## Acknowledgements
 
 - [Laravel](https://laravel.com)
